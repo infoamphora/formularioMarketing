@@ -8,24 +8,110 @@
   --line: #343c45;
   --accent: #48c7b0;
   --accent-dark: #33a995;
+  --button-text: #ffffff;
+  --surface-muted: #313943;
+  --surface-muted-hover: #3d4652;
+  --surface-muted-text: #f3f6f8;
+  --field-locked: #171c21;
+  --muted-locked-text: #8f9aa5;
   --danger: #ff8a7a;
   --ok: #69d59a;
+  --ok-bg: rgba(105, 213, 154, 0.12);
+  --ok-border: rgba(105, 213, 154, 0.35);
+  --info: #8cc8ff;
+  --info-bg: rgba(140, 200, 255, 0.12);
+  --info-border: rgba(140, 200, 255, 0.3);
+  --fail: #ff8a7a;
+  --fail-bg: rgba(255, 138, 122, 0.12);
+  --fail-border: rgba(255, 138, 122, 0.36);
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Amphora: warm cream background, saddlebrown accent (matches their leather/product tones) */
 body.brand-amphora {
-  --accent: #48c7b0;
-  --accent-dark: #33a995;
+  color-scheme: light;
+  --bg: #f7f4ef;
+  --panel: #ffffff;
+  --field: #f2ede6;
+  --text: #1a1512;
+  --muted: #7a6f65;
+  --line: #e2dad0;
+  --accent: #8b4513;
+  --accent-dark: #6b350f;
+  --button-text: #ffffff;
+  --surface-muted: #e2dad0;
+  --surface-muted-hover: #d5cabb;
+  --surface-muted-text: #1a1512;
+  --field-locked: #ece5db;
+  --muted-locked-text: #8f8579;
+  --danger: #b3261e;
+  --ok: #1f8a4c;
+  --ok-bg: rgba(31, 138, 76, 0.1);
+  --ok-border: rgba(31, 138, 76, 0.35);
+  --info: #1c64d1;
+  --info-bg: rgba(28, 100, 209, 0.1);
+  --info-border: rgba(28, 100, 209, 0.32);
+  --fail: #b3261e;
+  --fail-bg: rgba(179, 38, 30, 0.1);
+  --fail-border: rgba(179, 38, 30, 0.32);
 }
 
+/* Scalpers: near-black editorial background, goldenrod accent */
 body.brand-scalpers {
-  --accent: #58a6ff;
-  --accent-dark: #2f7ee8;
+  color-scheme: dark;
+  --bg: #121212;
+  --panel: #191919;
+  --field: #1f1f1f;
+  --text: #f5f5f5;
+  --muted: #a8a8a8;
+  --line: #333333;
+  --accent: #daa520;
+  --accent-dark: #b8860b;
+  --button-text: #161616;
+  --surface-muted: #2a2a2a;
+  --surface-muted-hover: #353535;
+  --surface-muted-text: #f5f5f5;
+  --field-locked: #1b1b1b;
+  --muted-locked-text: #8f9aa5;
+  --danger: #ff8a7a;
+  --ok: #69d59a;
+  --ok-bg: rgba(105, 213, 154, 0.12);
+  --ok-border: rgba(105, 213, 154, 0.35);
+  --info: #8cc8ff;
+  --info-bg: rgba(140, 200, 255, 0.12);
+  --info-border: rgba(140, 200, 255, 0.3);
+  --fail: #ff8a7a;
+  --fail-bg: rgba(255, 138, 122, 0.12);
+  --fail-border: rgba(255, 138, 122, 0.36);
 }
 
+/* Renatta&go: clean white background, firebrick accent */
 body.brand-renatta {
-  --accent: #d56b8c;
-  --accent-dark: #b84f72;
+  color-scheme: light;
+  --bg: #ffffff;
+  --panel: #ffffff;
+  --field: #f5f5f5;
+  --text: #111111;
+  --muted: #6f6f6f;
+  --line: #e4e4e4;
+  --accent: #b22222;
+  --accent-dark: #8b0000;
+  --button-text: #ffffff;
+  --surface-muted: #ededed;
+  --surface-muted-hover: #e0e0e0;
+  --surface-muted-text: #111111;
+  --field-locked: #f2f2f2;
+  --muted-locked-text: #8a8a8a;
+  --danger: #b3261e;
+  --ok: #1f8a4c;
+  --ok-bg: rgba(31, 138, 76, 0.1);
+  --ok-border: rgba(31, 138, 76, 0.35);
+  --info: #1c64d1;
+  --info-bg: rgba(28, 100, 209, 0.1);
+  --info-border: rgba(28, 100, 209, 0.32);
+  --fail: #b3261e;
+  --fail-bg: rgba(179, 38, 30, 0.1);
+  --fail-border: rgba(179, 38, 30, 0.32);
 }
 
 * {
@@ -59,13 +145,11 @@ body {
   margin-bottom: 24px;
 }
 
-.eyebrow {
-  margin: 0 0 8px;
-  color: var(--accent);
-  font-size: 13px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0;
+.brand-logo {
+  display: block;
+  height: 28px;
+  width: auto;
+  margin: 0 0 14px;
 }
 
 h1 {
@@ -157,16 +241,19 @@ input::placeholder {
 }
 
 input.locked-field {
-  color: #8f9aa5;
-  background: #171c21;
+  color: var(--muted-locked-text);
+  background: var(--field-locked);
   cursor: not-allowed;
+}
+
+.policy-group {
+  margin-top: 4px;
 }
 
 .policy {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  margin-top: 22px;
   color: var(--text);
   font-weight: 600;
   line-height: 1.45;
@@ -229,7 +316,7 @@ button {
   border: 0;
   border-radius: 6px;
   padding: 0 18px;
-  color: #fff;
+  color: var(--button-text);
   background: var(--accent);
   font: inherit;
   font-weight: 700;
@@ -243,7 +330,7 @@ button {
   justify-content: center;
   border-radius: 6px;
   padding: 0 18px;
-  color: #fff;
+  color: var(--button-text);
   background: var(--accent);
   font: inherit;
   font-weight: 700;
@@ -264,12 +351,12 @@ button:disabled {
 }
 
 .secondary {
-  color: var(--text);
-  background: #313943;
+  color: var(--surface-muted-text);
+  background: var(--surface-muted);
 }
 
 .secondary:hover {
-  background: #3d4652;
+  background: var(--surface-muted-hover);
 }
 
 .status {
@@ -288,20 +375,20 @@ button:disabled {
 .status.ok,
 .status.success {
   color: var(--ok);
-  background: rgba(105, 213, 154, 0.12);
-  border: 1px solid rgba(105, 213, 154, 0.35);
+  background: var(--ok-bg);
+  border: 1px solid var(--ok-border);
 }
 
 .status.info {
-  color: #8cc8ff;
-  background: rgba(140, 200, 255, 0.12);
-  border: 1px solid rgba(140, 200, 255, 0.3);
+  color: var(--info);
+  background: var(--info-bg);
+  border: 1px solid var(--info-border);
 }
 
 .status.fail {
-  color: var(--danger);
-  background: rgba(255, 138, 122, 0.12);
-  border: 1px solid rgba(255, 138, 122, 0.36);
+  color: var(--fail);
+  background: var(--fail-bg);
+  border: 1px solid var(--fail-border);
 }
 
 .debug-title {
@@ -336,6 +423,12 @@ button:disabled {
 
 .thanks-panel {
   text-align: center;
+}
+
+.thanks-panel .heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .thanks-panel .actions {
@@ -403,20 +496,20 @@ button:disabled {
   flex: 0 0 38px;
   padding: 0;
   border-radius: 50%;
-  color: var(--text);
-  background: #313943;
+  color: var(--surface-muted-text);
+  background: var(--surface-muted);
   font-size: 26px;
   line-height: 1;
 }
 
 .icon-button:hover {
-  background: #3d4652;
+  background: var(--surface-muted-hover);
 }
 
 .modal-content {
   overflow: auto;
   padding: 20px 22px;
-  color: #d5dce3;
+  color: var(--text);
   font-size: 15px;
   font-weight: 400;
   line-height: 1.65;

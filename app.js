@@ -19,8 +19,9 @@
   const marketingPolicyModal = document.querySelector("#marketing-policy-modal");
   const marketingPolicyContent = marketingPolicyModal.querySelector(".modal-content");
   const acknowledgeMarketingPolicyButton = document.querySelector("#acknowledge-marketing-policy");
-  const brandLabelNodes = document.querySelectorAll("[data-brand-label]");
+  const brandLogoNodes = document.querySelectorAll("[data-brand-logo]");
   const brandEmailNodes = document.querySelectorAll("[data-brand-contact-email]");
+  const brandWebsiteNodes = document.querySelectorAll("[data-brand-website-link]");
   const apiUrl =
     window.location.protocol === "file:"
       ? "http://localhost:3000/api/business-partners"
@@ -51,18 +52,24 @@
       label: "Amphora",
       email: "datospersonales@amphora.cl",
       bodyClass: "brand-amphora",
+      logo: "./assets/logo-amphora.png",
+      website: "https://www.amphora.cl",
     },
     SCALPERS: {
       code: "SCALPERS",
       label: "Scalpers",
       email: "datospersonales@scalpers.cl",
       bodyClass: "brand-scalpers",
+      logo: "./assets/logo-scalpers.svg",
+      website: "https://cl.scalperscompany.com",
     },
     RENATTA: {
       code: "RENATTA",
       label: "Renatta",
       email: "datospersonales@amphora.cl",
       bodyClass: "brand-renatta",
+      logo: "./assets/logo-renatta.png",
+      website: "https://www.renattandgo.cl",
     },
   };
 
@@ -170,7 +177,7 @@
 
   function setLoadingState(isLoading, label = "Continuar") {
     continueButton.disabled = isLoading;
-    continueButton.textContent = isLoading ? "Buscando..." : label;
+    continueButton.textContent = isLoading ? "Un momento..." : label;
   }
 
   function setExistingPartnerMode(isExistingPartner) {
@@ -181,14 +188,19 @@
   }
 
   function applyBrand() {
-    document.title = `${activeBrand.label} | Registro de socio de negocios`;
+    document.title = `${activeBrand.label} | Suscribete y recibe beneficios`;
     document.body.classList.remove("brand-amphora", "brand-scalpers", "brand-renatta");
     document.body.classList.add(activeBrand.bodyClass);
-    brandLabelNodes.forEach((node) => {
-      node.textContent = activeBrand.label;
+    brandLogoNodes.forEach((node) => {
+      node.src = activeBrand.logo;
+      node.alt = activeBrand.label;
     });
     brandEmailNodes.forEach((node) => {
       node.textContent = activeBrand.email;
+    });
+    brandWebsiteNodes.forEach((node) => {
+      node.href = activeBrand.website;
+      node.textContent = `Ir a ${activeBrand.label}`;
     });
   }
 
@@ -449,15 +461,14 @@
       if (birth > today) issues.birthDate = "La fecha no puede estar en el futuro.";
     }
     if (!policyRead) {
-      issues.acceptPolicy = "Debes leer la autorizacion antes de aceptar las politicas.";
+      issues.acceptPolicy = "Debes leer el texto completo antes de aceptar.";
     } else if (!data.acceptPolicy) {
-      issues.acceptPolicy = "Debes aceptar las politicas de proteccion de datos.";
+      issues.acceptPolicy = "Debes aceptar la Politica de Privacidad para continuar.";
     }
     if (!marketingPolicyRead) {
-      issues.acceptMarketingPolicy =
-        "Debes leer la autorizacion antes de aceptar las politicas de marketing.";
+      issues.acceptMarketingPolicy = "Debes leer el texto completo antes de aceptar.";
     } else if (!data.acceptMarketingPolicy) {
-      issues.acceptMarketingPolicy = "Debes aceptar las politicas de marketing.";
+      issues.acceptMarketingPolicy = "Debes aceptar para recibir promociones y novedades.";
     }
 
     Object.entries(issues).forEach(([field, message]) => setError(field, message));
@@ -502,7 +513,7 @@
     if (!rut) return;
 
     setLoadingState(true);
-    setStatus("Buscando datos del socio en SAP...", "info");
+    setStatus("Buscando tus datos...", "info");
 
     fetch(
       `${lookupApiUrl}?rut=${encodeURIComponent(rut)}&brand=${encodeURIComponent(activeBrand.code)}&debugMode=${debugLookupEnabled ? "true" : "false"}`
@@ -510,7 +521,9 @@
       .then(async (response) => {
         const result = await response.json().catch(() => ({}));
         if (!response.ok) {
-          const error = new Error(result.message || "No se pudo consultar SAP.");
+          const error = new Error(
+            "No pudimos verificar tus datos en este momento. Intenta nuevamente en unos segundos."
+          );
           error.debugData = result.sapSearchResponse || result.sapFound || result;
           error.debugQuery = result.sapLookupQuery || null;
           throw error;
@@ -524,7 +537,7 @@
         if (result.sapFound) {
           fillDetailsFromPartner(result.sapFound);
           setStatus(
-            "Socio encontrado. Los datos disponibles fueron completados.",
+            "Ya tienes una cuenta con nosotros. Completamos tus datos automaticamente.",
             "success",
             sapDebugData,
             sapDebugQuery
@@ -532,7 +545,7 @@
         } else {
           setExistingPartnerMode(false);
           setStatus(
-            "No se encontro un socio con ese RUT. Completa los datos manualmente.",
+            "No encontramos una cuenta con ese RUT. Completa tus datos para crear una.",
             "info",
             sapDebugData,
             sapDebugQuery
@@ -604,7 +617,7 @@
     if (!validate(payload)) return;
 
     submitButton.disabled = true;
-    submitButton.textContent = "Registrando...";
+    submitButton.textContent = "Enviando...";
 
     try {
       const response = await fetch(apiUrl, {
@@ -615,11 +628,11 @@
       const result = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        setStatus(
-          result.message || "No se pudo crear el socio de negocios.",
-          "fail",
-          result.sapFound || result.sapSearchResponse
-        );
+        const friendlyMessage =
+          response.status < 500
+            ? result.message || "Revisa los datos ingresados e intenta nuevamente."
+            : "No pudimos completar tu suscripcion en este momento. Intenta nuevamente en unos minutos.";
+        setStatus(friendlyMessage, "fail", result.sapFound || result.sapSearchResponse);
         return;
       }
 
@@ -628,10 +641,13 @@
       thanksPanel.hidden = false;
       thanksPanel.focus();
     } catch (error) {
-      setStatus(error.message, "fail");
+      setStatus(
+        "No pudimos completar tu suscripcion. Verifica tu conexion e intenta nuevamente.",
+        "fail"
+      );
     } finally {
       submitButton.disabled = false;
-      submitButton.textContent = "Registrar mis datos";
+      submitButton.textContent = "Suscribirme";
     }
   });
 

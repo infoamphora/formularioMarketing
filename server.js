@@ -43,6 +43,10 @@ const mimeTypes = {
   ".html": "text/html; charset=utf-8",
   ".css": "text/css; charset=utf-8",
   ".js": "application/javascript; charset=utf-8",
+  ".svg": "image/svg+xml",
+  ".png": "image/png",
+  ".webp": "image/webp",
+  ".avif": "image/avif",
 };
 
 function loadDotEnv(filePath) {
@@ -400,6 +404,39 @@ function buildBusinessPartner(data) {
   return payload;
 }
 
+const CLIENT_PARTNER_FIELDS = [
+  "CardCode",
+  "CardName",
+  "CardForeignName",
+  "FederalTaxID",
+  "LicTradNum",
+  "Phone1",
+  "Phone2",
+  "Cellular",
+  "EmailAddress",
+  "E_Mail",
+  "MailAddress",
+  "City",
+  "CityName",
+  "U_GSP_BIRTHDATE",
+  "BirthDate",
+  "U_AMP_MARKETINGAMP",
+  "U_AMP_POLITICASAMP",
+  "U_AMP_MARKETINGSCA",
+  "U_AMP_POLITICASSCA",
+  "U_AMP_MARKETINGRTA",
+  "U_AMP_POLITICASRTA",
+];
+
+function sanitizePartnerForClient(partner) {
+  if (!partner || typeof partner !== "object") return null;
+  const sanitized = {};
+  for (const field of CLIENT_PARTNER_FIELDS) {
+    if (partner[field] !== undefined) sanitized[field] = partner[field];
+  }
+  return sanitized;
+}
+
 function buildOptionalPartnerUpdate(data) {
   const payload = {
     FederalTaxID: normalizeRut(data.rut),
@@ -681,10 +718,10 @@ async function findBusinessPartnerByRut(data, cookies, debugLog, options = {}) {
 }
 
 function validatePartner(data) {
-  if (!data || typeof data !== "object") return "Solicitud invalida.";
+  if (!data || typeof data !== "object") return "No pudimos leer tus datos. Intenta nuevamente.";
   if (!data.rut) return "El RUT es obligatorio.";
   if (!data.name) return "El nombre es obligatorio.";
-  if (!data.acceptPolicy) return "Debe aceptar las politicas de proteccion de datos.";
+  if (!data.acceptPolicy) return "Debes aceptar la Politica de Privacidad para continuar.";
   return "";
 }
 
@@ -724,14 +761,14 @@ async function handleBusinessPartner(req, res) {
     const existingPartner = await findBusinessPartnerByRut(body, login.cookies, debugLog);
 
     if (existingPartner) {
-      if (body.debugMode) {
+      if (body.debugMode && APP_DEBUG_LOOKUP) {
         debugLog("Modo depuracion activo: se detiene antes del PATCH y se devuelve respuesta SAP.");
         sendJson(res, 200, {
           message: `Depuracion: SAP encontro el socio ${existingPartner.CardCode}. No se actualizo para mostrar la respuesta encontrada.`,
           cardCode: existingPartner.CardCode,
           exists: true,
           debugMode: true,
-          sapFound: existingPartner,
+          sapFound: sanitizePartnerForClient(existingPartner),
         });
         return;
       }
@@ -749,7 +786,7 @@ async function handleBusinessPartner(req, res) {
         message: `El socio de negocios ${existingPartner.CardCode} ya existe. Se actualizaron los campos no obligatorios y el RUT se normalizo sin puntos.`,
         cardCode: existingPartner.CardCode,
         exists: true,
-        sapFound: existingPartner,
+        sapFound: sanitizePartnerForClient(existingPartner),
       });
       return;
     }
@@ -772,8 +809,8 @@ async function handleBusinessPartner(req, res) {
 
     sendJson(res, 500, {
       message: error.message,
-      sapFound: error.sapFound,
-      sapSearchResponse: error.sapSearchResponse,
+      sapFound: APP_DEBUG_LOOKUP ? sanitizePartnerForClient(error.sapFound) : null,
+      sapSearchResponse: APP_DEBUG_LOOKUP ? error.sapSearchResponse : null,
     });
   }
 }
@@ -834,7 +871,7 @@ async function handleBusinessPartnerLookup(req, res) {
       rut: normalizedRut,
       brand,
       cardCode: existingPartner.CardCode || null,
-      sapFound: existingPartner,
+      sapFound: sanitizePartnerForClient(existingPartner),
       sapSearchResponse: APP_DEBUG_LOOKUP
         ? existingPartner.__sapSearchResponse || existingPartner
         : null,

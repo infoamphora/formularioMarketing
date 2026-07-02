@@ -3,24 +3,24 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Registro de Socio de Negocios</title>
-    <link rel="stylesheet" href="./styles.css?v=20260702-1">
+    <title>Suscribete y recibe beneficios</title>
+    <link rel="stylesheet" href="./styles.css?v=20260702-3">
   </head>
   <body>
     <main class="shell">
       <section id="registration-panel" class="form-panel" aria-labelledby="form-title">
         <div class="heading">
-          <p class="eyebrow" data-brand-label>Interandina de Comercio</p>
-          <h1 id="form-title">Registro de socio de negocios</h1>
-          <p>Completa los datos del usuario para crear su ficha comercial.</p>
+          <img class="brand-logo" data-brand-logo alt="">
+          <h1 id="form-title">Suscribete y no te pierdas nuestros beneficios</h1>
+          <p>Completa tus datos para sumarte a nuestra lista de novedades, promociones y descuentos.</p>
         </div>
 
         <form id="partner-form" novalidate>
           <section id="rut-step" class="step-panel">
             <div class="step-copy">
               <p class="step-label">Paso 1</p>
-              <h2>Comencemos con tu RUT</h2>
-              <p>Validaremos este dato primero y luego te pediremos el resto de la informacion.</p>
+              <h2>Ingresa tu RUT para comenzar</h2>
+              <p>Si ya nos has comprado antes, completaremos tus datos automaticamente.</p>
             </div>
 
             <label class="rut-step-field">
@@ -37,8 +37,8 @@
           <section id="details-step" class="step-panel" hidden>
             <div class="step-copy">
               <p class="step-label">Paso 2</p>
-              <h2>Completa tu registro</h2>
-              <p>Confirma tu RUT y completa los datos necesarios para registrar tu cuenta.</p>
+              <h2>Ya casi terminamos</h2>
+              <p>Confirma tus datos para completar tu suscripcion.</p>
             </div>
 
             <div class="grid">
@@ -79,26 +79,30 @@
               </label>
             </div>
 
-            <label class="policy">
-              <input id="acceptPolicy" name="acceptPolicy" type="checkbox" required disabled>
-              <span>
-                Acepto las politicas de la empresa asociadas a la Ley de Proteccion de Datos Personales.
-                <button id="open-policy" class="link-button" type="button">Leer autorizacion</button>
-              </span>
-            </label>
-            <small class="error policy-error" data-error-for="acceptPolicy"></small>
+            <div class="policy-group">
+              <label class="policy">
+                <input id="acceptPolicy" name="acceptPolicy" type="checkbox" required disabled>
+                <span>
+                  Acepto la Politica de Privacidad y el uso de mis datos personales.
+                  <button id="open-policy" class="link-button" type="button">Leer mas</button>
+                </span>
+              </label>
+              <small class="error policy-error" data-error-for="acceptPolicy"></small>
+            </div>
 
-            <label class="policy">
-              <input id="acceptMarketingPolicy" name="acceptMarketingPolicy" type="checkbox" required disabled>
-              <span>
-                Acepto las politicas de marketing y comunicaciones comerciales de la empresa.
-                <button id="open-marketing-policy" class="link-button" type="button">Leer autorizacion</button>
-              </span>
-            </label>
-            <small class="error policy-error" data-error-for="acceptMarketingPolicy"></small>
+            <div class="policy-group">
+              <label class="policy">
+                <input id="acceptMarketingPolicy" name="acceptMarketingPolicy" type="checkbox" required disabled>
+                <span>
+                  Quiero recibir promociones, novedades y descuentos por correo y otros medios.
+                  <button id="open-marketing-policy" class="link-button" type="button">Leer mas</button>
+                </span>
+              </label>
+              <small class="error policy-error" data-error-for="acceptMarketingPolicy"></small>
+            </div>
 
             <div class="actions">
-              <button id="submit-button" type="submit">Registrar mis datos</button>
+              <button id="submit-button" type="submit">Suscribirme</button>
               <button class="secondary" type="reset">Limpiar</button>
             </div>
           </section>
@@ -109,13 +113,13 @@
 
       <section id="thanks-panel" class="form-panel thanks-panel" aria-labelledby="thanks-title" tabindex="-1" hidden>
         <div class="heading">
-          <p class="eyebrow" data-brand-label>Interandina de Comercio</p>
-          <h1 id="thanks-title">Gracias por registrarte</h1>
-          <p>Tus datos fueron recibidos correctamente.</p>
+          <img class="brand-logo" data-brand-logo alt="">
+          <h1 id="thanks-title">Listo, ya estas suscrito</h1>
+          <p>Te avisaremos por correo cuando tengamos novedades, promociones y descuentos especiales para ti.</p>
         </div>
 
         <div class="actions">
-          <a class="button-link" href="https://amphora.cl">Ir a Amphora</a>
+          <a class="button-link" data-brand-website-link href="https://amphora.cl">Ir al sitio</a>
         </div>
       </section>
     </main>
@@ -169,6 +173,6 @@
       </section>
     </div>
 
-    <script src="./app.js?v=20260702-1"></script>
+    <script src="./app.js?v=20260702-3"></script>
   </body>
 </html>
