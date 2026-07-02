@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Registro de Socio de Negocios</title>
+    <link rel="stylesheet" href="./styles.css?v=20260702-1">
+  </head>
+  <body>
+    <main class="shell">
+      <section id="registration-panel" class="form-panel" aria-labelledby="form-title">
+        <div class="heading">
+          <p class="eyebrow" data-brand-label>Interandina de Comercio</p>
+          <h1 id="form-title">Registro de socio de negocios</h1>
+          <p>Completa los datos del usuario para crear su ficha comercial.</p>
+        </div>
+
+        <form id="partner-form" novalidate>
+          <section id="rut-step" class="step-panel">
+            <div class="step-copy">
+              <p class="step-label">Paso 1</p>
+              <h2>Comencemos con tu RUT</h2>
+              <p>Validaremos este dato primero y luego te pediremos el resto de la informacion.</p>
+            </div>
+
+            <label class="rut-step-field">
+              <span>RUT <strong>*</strong></span>
+              <input id="rut-entry" type="text" autocomplete="off" placeholder="12.345.678-5" required>
+              <small class="error" data-error-for="rutStep"></small>
+            </label>
+
+            <div class="actions">
+              <button id="continue-button" type="button">Continuar</button>
+            </div>
+          </section>
+
+          <section id="details-step" class="step-panel" hidden>
+            <div class="step-copy">
+              <p class="step-label">Paso 2</p>
+              <h2>Completa tu registro</h2>
+              <p>Confirma tu RUT y completa los datos necesarios para registrar tu cuenta.</p>
+            </div>
+
+            <div class="grid">
+              <label>
+                <span>RUT <strong>*</strong></span>
+                <input id="rut" name="rut" type="text" autocomplete="off" placeholder="12.345.678-5" required>
+                <small class="error" data-error-for="rut"></small>
+              </label>
+
+              <label>
+                <span>Nombre <strong>*</strong></span>
+                <input id="name" name="name" type="text" autocomplete="name" placeholder="Nombre completo" required>
+                <small class="error" data-error-for="name"></small>
+              </label>
+
+              <label>
+                <span>Telefono</span>
+                <input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="+56 9 1234 5678">
+                <small class="error" data-error-for="phone"></small>
+              </label>
+
+              <label>
+                <span>Email</span>
+                <input id="email" name="email" type="email" autocomplete="email" placeholder="correo@empresa.cl">
+                <small class="error" data-error-for="email"></small>
+              </label>
+
+              <label>
+                <span>Fecha de nacimiento</span>
+                <input id="birthDate" name="birthDate" type="date">
+                <small class="error" data-error-for="birthDate"></small>
+              </label>
+
+              <label>
+                <span>Ciudad de residencia</span>
+                <input id="city" name="city" type="text" autocomplete="address-level2" placeholder="Santiago">
+                <small class="error" data-error-for="city"></small>
+              </label>
+            </div>
+
+            <label class="policy">
+              <input id="acceptPolicy" name="acceptPolicy" type="checkbox" required disabled>
+              <span>
+                Acepto las politicas de la empresa asociadas a la Ley de Proteccion de Datos Personales.
+                <button id="open-policy" class="link-button" type="button">Leer autorizacion</button>
+              </span>
+            </label>
+            <small class="error policy-error" data-error-for="acceptPolicy"></small>
+
+            <label class="policy">
+              <input id="acceptMarketingPolicy" name="acceptMarketingPolicy" type="checkbox" required disabled>
+              <span>
+                Acepto las politicas de marketing y comunicaciones comerciales de la empresa.
+                <button id="open-marketing-policy" class="link-button" type="button">Leer autorizacion</button>
+              </span>
+            </label>
+            <small class="error policy-error" data-error-for="acceptMarketingPolicy"></small>
+
+            <div class="actions">
+              <button id="submit-button" type="submit">Registrar mis datos</button>
+              <button class="secondary" type="reset">Limpiar</button>
+            </div>
+          </section>
+
+          <div id="status" class="status" role="status" aria-live="polite"></div>
+        </form>
+      </section>
+
+      <section id="thanks-panel" class="form-panel thanks-panel" aria-labelledby="thanks-title" tabindex="-1" hidden>
+        <div class="heading">
+          <p class="eyebrow" data-brand-label>Interandina de Comercio</p>
+          <h1 id="thanks-title">Gracias por registrarte</h1>
+          <p>Tus datos fueron recibidos correctamente.</p>
+        </div>
+
+        <div class="actions">
+          <a class="button-link" href="https://amphora.cl">Ir a Amphora</a>
+        </div>
+      </section>
+    </main>
+
+    <div id="policy-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="policy-title" hidden>
+      <div class="modal-backdrop" data-close-policy></div>
+      <section class="modal-panel">
+        <div class="modal-heading">
+          <h2 id="policy-title">Autorizacion para el tratamiento de datos personales</h2>
+          <button class="icon-button" type="button" aria-label="Cerrar autorizacion" data-close-policy>&times;</button>
+        </div>
+
+        <div class="modal-content" tabindex="0">
+          <p>Declaro que he sido informado/a y autorizo expresamente a Interandina de Comercio LTDA, RUT 96521550-6, en adelante el "Responsable", para recolectar, almacenar, utilizar y tratar mis datos personales ingresados en este formulario, conforme a la normativa chilena vigente sobre proteccion de datos personales, incluyendo la Ley N 19.628 y sus modificaciones introducidas por la Ley N 21.719.</p>
+          <p>Los datos solicitados corresponden a: RUT, nombre, correo electronico, telefono, fecha de nacimiento y ciudad de residencia. El RUT y el nombre son necesarios para identificar al usuario dentro de la plataforma y administrar correctamente su cuenta, beneficios, acumulacion de puntos y programa de fidelizacion. Los demas datos seran utilizados para fines de contacto, segmentacion comercial, envio de promociones, descuentos, beneficios, comunicaciones personalizadas, informacion sobre productos o servicios, campanas especiales y gestion del programa de fidelizacion.</p>
+          <p>El tratamiento de mis datos tendra como finalidad permitir mi registro en la plataforma, gestionar mi participacion en programas de puntos, beneficios y fidelizacion, validar mi identidad como usuario registrado, mejorar la experiencia de uso, enviar comunicaciones comerciales y promocionales por medios electronicos, telefonicos u otros canales de contacto proporcionados, y generar estadisticas internas relacionadas con habitos de compra, preferencias y participacion en promociones.</p>
+          <p>Declaro conocer que la entrega de los datos identificados como obligatorios es necesaria para completar el registro y acceder a las funcionalidades principales de la plataforma. La entrega de los datos no obligatorios es voluntaria, sin perjuicio de que su ausencia podria limitar la personalizacion de beneficios, promociones o comunicaciones.</p>
+          <p>Los datos personales seran tratados unicamente para las finalidades informadas y seran conservados durante el tiempo necesario para cumplir dichos fines, mientras se mantenga activa la cuenta del usuario, exista una relacion comercial vigente, o mientras sea necesario para cumplir obligaciones legales, contractuales, administrativas o de seguridad.</p>
+          <p>Interandina de Comercio LTDA adoptara medidas razonables de seguridad, confidencialidad y resguardo para proteger los datos personales contra acceso no autorizado, perdida, uso indebido, alteracion o divulgacion no autorizada.</p>
+          <p>Asimismo, declaro haber sido informado/a de que puedo ejercer los derechos que correspondan conforme a la normativa aplicable, incluyendo el derecho de acceso, rectificacion, supresion, oposicion, bloqueo, portabilidad y revocacion del consentimiento cuando proceda. Para ejercer estos derechos, podre contactar a Interandina de Comercio LTDA mediante el correo electronico <span data-brand-contact-email>datospersonales@amphora.cl</span>.</p>
+          <p>Al aceptar esta autorizacion, consiento el tratamiento de mis datos personales para los fines antes indicados, especialmente para la administracion de mi cuenta, acumulacion de puntos, participacion en programas de fidelizacion y envio de promociones, descuentos, beneficios y comunicaciones comerciales de Interandina de Comercio LTDA.</p>
+        </div>
+
+        <div class="modal-actions">
+          <button id="acknowledge-policy" type="button" disabled>Lee hasta el final</button>
+        </div>
+      </section>
+    </div>
+
+    <div id="marketing-policy-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="marketing-policy-title" hidden>
+      <div class="modal-backdrop" data-close-marketing-policy></div>
+      <section class="modal-panel">
+        <div class="modal-heading">
+          <h2 id="marketing-policy-title">Autorizacion para marketing y comunicaciones comerciales</h2>
+          <button class="icon-button" type="button" aria-label="Cerrar autorizacion de marketing" data-close-marketing-policy>&times;</button>
+        </div>
+
+        <div class="modal-content" tabindex="0">
+          <p>Declaro que he sido informado/a y autorizo expresamente a Interandina de Comercio LTDA para utilizar mis datos de contacto con fines de marketing, comunicaciones comerciales y relacionamiento con clientes, de conformidad con la normativa aplicable y con las politicas internas de la empresa.</p>
+          <p>Esta autorizacion comprende el envio de informacion sobre productos, colecciones, promociones, descuentos, lanzamientos, beneficios, eventos, novedades de marca, recomendaciones personalizadas y contenidos relacionados con la experiencia comercial de la empresa.</p>
+          <p>Las comunicaciones podran realizarse por correo electronico, telefono, mensajeria instantanea, SMS u otros canales de contacto que yo haya proporcionado voluntariamente al momento de registrarme o actualizar mis datos.</p>
+          <p>Entiendo que esta autorizacion es independiente del registro en la plataforma y que su finalidad es permitir una comunicacion comercial mas relevante, oportuna y personalizada, asi como el acceso a beneficios, invitaciones y acciones promocionales que puedan ser de mi interes.</p>
+          <p>La empresa adoptara medidas razonables para resguardar la confidencialidad de mis datos y limitara su uso exclusivamente a las finalidades comerciales y promocionales informadas en esta autorizacion.</p>
+          <p>Asimismo, declaro haber sido informado/a de que podre solicitar en cualquier momento la suspension de estas comunicaciones comerciales o actualizar mis preferencias de contacto mediante los canales que la empresa disponga para ello.</p>
+          <p>Al aceptar esta autorizacion, consiento expresamente el uso de mis datos para fines de marketing y comunicaciones comerciales, incluyendo el envio de promociones, beneficios, descuentos, campañas especiales y contenidos asociados a las marcas y servicios de Interandina de Comercio LTDA.</p>
+        </div>
+
+        <div class="modal-actions">
+          <button id="acknowledge-marketing-policy" type="button" disabled>Lee hasta el final</button>
+        </div>
+      </section>
+    </div>
+
+    <script src="./app.js?v=20260702-1"></script>
+  </body>
+</html>
