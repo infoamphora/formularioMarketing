@@ -17,6 +17,7 @@ Luego abre `http://localhost:3000`. Tambien puede abrirse `index.html` como arch
 
 - Las variables de conexion se leen desde `.env` (ver `.env.example`):
   - `PORT`
+  - `APP_BASE_PATH`
   - `SAP_B1_SERVICE_LAYER_URL`
   - `SAP_B1_COMPANY_DBAMP`
   - `SAP_B1_COMPANY_DBRTA`
@@ -38,6 +39,7 @@ Luego abre `http://localhost:3000`. Tambien puede abrirse `index.html` como arch
 - El RUT se normaliza sin puntos y con guion antes de crear o actualizar, por ejemplo `17.273.201-1` y `172732011` quedan como `17273201-1`.
 - TLS SAP: el backend prueba perfiles TLS con fallback para Service Layer antiguo, incluyendo `TLSv1` y `DEFAULT@SECLEVEL=0`. Se puede cambiar con `SAP_B1_TLS_MIN_VERSION`, `SAP_B1_TLS_CIPHERS` y `SAP_B1_TIMEOUT_MS`.
 - Depuracion de busqueda por RUT: `APP_DEBUG_LOOKUP=true` muestra en pantalla la query enviada a Service Layer y el JSON crudo devuelto por SAP.
+- Si el formulario se publica bajo una subruta, por ejemplo `/formulario`, define `APP_BASE_PATH=/formulario`. El backend servira HTML, JS, CSS y APIs tanto en local como detras de Apache bajo esa ruta.
 
 Si el socio ya existe en SAP, el formulario muestra un mensaje indicando que existe y actualiza los datos no obligatorios: email, telefono en `Cellular` y `Phone1`, fecha de nacimiento, ciudad, `U_GSP_SENDTPV='Y'` y el RUT normalizado en `LicTradNum`.
 

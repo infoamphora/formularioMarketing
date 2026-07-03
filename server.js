@@ -21,6 +21,7 @@ const SAP_TLS_MIN_VERSION = process.env.SAP_B1_TLS_MIN_VERSION || "TLSv1";
 const SAP_TLS_CIPHERS = process.env.SAP_B1_TLS_CIPHERS || "DEFAULT@SECLEVEL=0";
 const SAP_TIMEOUT_MS = Number(process.env.SAP_B1_TIMEOUT_MS || 30000);
 const APP_DEBUG_LOOKUP = process.env.APP_DEBUG_LOOKUP === "true";
+const APP_BASE_PATH = normalizeBasePath(process.env.APP_BASE_PATH || "");
 const LEGACY_SECURE_OPTIONS = crypto.constants.SSL_OP_LEGACY_SERVER_CONNECT || 0;
 
 function assertRequiredSapConfig() {
@@ -75,6 +76,34 @@ function loadDotEnv(filePath) {
     value = value.replace(/\\n/g, "\n");
     process.env[key] = value;
   }
+}
+
+function normalizeBasePath(value) {
+  const trimmed = String(value || "").trim();
+  if (!trimmed || trimmed === "/") return "";
+
+  const withLeadingSlash = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
+  return withLeadingSlash.replace(/\/+$/, "");
+}
+
+function stripBasePath(pathname) {
+  if (!APP_BASE_PATH) return pathname;
+  if (pathname === APP_BASE_PATH) return "/";
+  if (pathname.startsWith(`${APP_BASE_PATH}/`)) {
+    return pathname.slice(APP_BASE_PATH.length) || "/";
+  }
+  return pathname;
+}
+
+function matchesRoute(requestPath, routePath) {
+  return requestPath === routePath || (APP_BASE_PATH && requestPath === `${APP_BASE_PATH}${routePath}`);
+}
+
+function matchesRoutePrefix(requestPath, routePrefix) {
+  return (
+    requestPath.startsWith(routePrefix) ||
+    (APP_BASE_PATH && requestPath.startsWith(`${APP_BASE_PATH}${routePrefix}`))
+  );
 }
 
 function getBrandPolicyFieldMap(brand) {
@@ -900,7 +929,8 @@ function handleRuntimeConfig(_req, res) {
 
 function serveStatic(req, res) {
   const pathname = decodeURIComponent((req.url || "/").split("?")[0]);
-  const requested = pathname === "/" ? "/index.html" : pathname;
+  const appPathname = stripBasePath(pathname);
+  const requested = appPathname === "/" ? "/index.html" : appPathname;
   const filePath = path.join(__dirname, requested);
 
   if (!filePath.startsWith(__dirname)) {
@@ -923,22 +953,24 @@ function serveStatic(req, res) {
 }
 
 const server = http.createServer((req, res) => {
+  const requestPath = decodeURIComponent((req.url || "/").split("?")[0]);
+
   if (req.method === "OPTIONS") {
     sendJson(res, 204, {});
     return;
   }
 
-  if (req.method === "POST" && req.url === "/api/business-partners") {
+  if (req.method === "POST" && matchesRoute(requestPath, "/api/business-partners")) {
     handleBusinessPartner(req, res);
     return;
   }
 
-  if (req.method === "GET" && req.url && req.url.startsWith("/api/business-partners/lookup")) {
+  if (req.method === "GET" && matchesRoutePrefix(requestPath, "/api/business-partners/lookup")) {
     handleBusinessPartnerLookup(req, res);
     return;
   }
 
-  if (req.method === "GET" && req.url === "/api/config") {
+  if (req.method === "GET" && matchesRoute(requestPath, "/api/config")) {
     handleRuntimeConfig(req, res);
     return;
   }
@@ -954,5 +986,8 @@ const server = http.createServer((req, res) => {
 assertRequiredSapConfig();
 
 server.listen(PORT, () => {
-  console.log(`Formulario disponible en http://localhost:${PORT}`);
+  const localUrl = APP_BASE_PATH
+    ? `http://localhost:${PORT}${APP_BASE_PATH}`
+    : `http://localhost:${PORT}`;
+  console.log(`Formulario disponible en ${localUrl}`);
 });

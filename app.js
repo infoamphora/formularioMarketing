@@ -22,18 +22,19 @@
   const brandLogoNodes = document.querySelectorAll("[data-brand-logo]");
   const brandEmailNodes = document.querySelectorAll("[data-brand-contact-email]");
   const brandWebsiteNodes = document.querySelectorAll("[data-brand-website-link]");
+  const appBasePath = detectBasePath();
   const apiUrl =
     window.location.protocol === "file:"
       ? "http://localhost:3000/api/business-partners"
-      : "/api/business-partners";
+      : `${appBasePath}/api/business-partners`;
   const lookupApiUrl =
     window.location.protocol === "file:"
       ? "http://localhost:3000/api/business-partners/lookup"
-      : "/api/business-partners/lookup";
+      : `${appBasePath}/api/business-partners/lookup`;
   const configApiUrl =
     window.location.protocol === "file:"
       ? "http://localhost:3000/api/config"
-      : "/api/config";
+      : `${appBasePath}/api/config`;
   const errors = new Map(
     Array.from(document.querySelectorAll("[data-error-for]")).map((node) => [
       node.dataset.errorFor,
@@ -78,6 +79,16 @@
     .trim()
     .toUpperCase();
   const activeBrand = brandConfig[brandCode] || brandConfig.AMPHORA;
+
+  function detectBasePath() {
+    const path = window.location.pathname || "/";
+    if (path === "/" || path === "/index.html") return "";
+    if (path.endsWith("/index.html")) return path.slice(0, -"/index.html".length);
+
+    const segments = path.split("/").filter(Boolean);
+    if (segments.length === 0) return "";
+    return `/${segments[0]}`;
+  }
 
   function cleanRut(value) {
     return value.replace(/\./g, "").replace(/-/g, "").trim().toUpperCase();
