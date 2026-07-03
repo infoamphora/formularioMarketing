@@ -542,6 +542,10 @@ function escapeOData(value) {
   return String(value).replace(/'/g, "''");
 }
 
+function withActiveBusinessPartnerFilter(filter) {
+  return `(${filter}) and (Valid eq 'tYES') and (Frozen eq 'tNO')`;
+}
+
 function extractHtmlMessage(value) {
   if (!value || !String(value).includes("<html")) return value;
 
@@ -630,15 +634,19 @@ async function findBusinessPartnerByRut(data, cookies, debugLog, options = {}) {
   const searches = [
     {
       reason: "RUT normalizado en FederalTaxID/LicTradNum",
-      filter: `FederalTaxID eq '${escapeOData(normalizedRut)}'`,
+      filter: withActiveBusinessPartnerFilter(
+        `FederalTaxID eq '${escapeOData(normalizedRut)}'`
+      ),
     },
     {
       reason: "RUT sin guion en FederalTaxID/LicTradNum",
-      filter: `FederalTaxID eq '${escapeOData(rutWithoutDash)}'`,
+      filter: withActiveBusinessPartnerFilter(
+        `FederalTaxID eq '${escapeOData(rutWithoutDash)}'`
+      ),
     },
     ...candidateCodes.map((cardCode) => ({
       reason: `CardCode candidato ${cardCode}`,
-      filter: `CardCode eq '${escapeOData(cardCode)}'`,
+      filter: withActiveBusinessPartnerFilter(`CardCode eq '${escapeOData(cardCode)}'`),
     })),
   ];
   debugLog("Buscando socio existente por RUT.", {
@@ -954,9 +962,18 @@ function serveStatic(req, res) {
 
 const server = http.createServer((req, res) => {
   const requestPath = decodeURIComponent((req.url || "/").split("?")[0]);
+  const requestSuffix = (req.url || "").slice(requestPath.length);
 
   if (req.method === "OPTIONS") {
     sendJson(res, 204, {});
+    return;
+  }
+
+  if (req.method === "GET" && APP_BASE_PATH && requestPath === APP_BASE_PATH) {
+    res.writeHead(302, {
+      Location: `${APP_BASE_PATH}/${requestSuffix.startsWith("?") ? requestSuffix : ""}`,
+    });
+    res.end();
     return;
   }
 
