@@ -22,6 +22,15 @@
   const brandLogoNodes = document.querySelectorAll("[data-brand-logo]");
   const brandEmailNodes = document.querySelectorAll("[data-brand-contact-email]");
   const brandWebsiteNodes = document.querySelectorAll("[data-brand-website-link]");
+  const brandBannerNodes = document.querySelectorAll("[data-brand-banner]");
+  const brandBannerTextNodes = document.querySelectorAll("[data-brand-banner-text]");
+  const formTitleNode = document.querySelector("[data-form-title]");
+  const formSubtitleNode = document.querySelector("[data-form-subtitle]");
+  const thanksTitleNode = document.querySelector("[data-thanks-title]");
+  const thanksSubtitleNode = document.querySelector("[data-thanks-subtitle]");
+  const thanksDiscountTextNode = document.querySelector("[data-thanks-discount-text]");
+  const discountCodeBox = document.querySelector("[data-discount-code]");
+  const discountCodeValue = document.querySelector("[data-discount-code-value]");
   const appBasePath = detectBasePath();
   const apiUrl =
     window.location.protocol === "file:"
@@ -53,8 +62,16 @@
       label: "Amphora",
       email: "datospersonales@amphora.cl",
       bodyClass: "brand-amphora",
-      logo: "./assets/logo-amphora.png",
-      website: "https://www.amphora.cl",
+      logo: "./assets/logo-amphora.svg",
+      website: "https://amphora.cl/?utm_source=form&utm_medium=form&utm_campaign=loyalty_program",
+      bannerText: "Unete al Amphora Pretty Club",
+      formTitle: "Registrate y se parte de nuestra comunidad.",
+      formSubtitle: "Desbloquea beneficios pensados solo para ti: promociones exclusivas, acceso anticipado a nuestras colecciones, invitaciones a eventos y una sorpresa especial en tu mes de cumpleanos.",
+      thanksTitle: "¡Ya eres parte de Pretty Club By Amphora! ✨",
+      thanksSubtitle: "Gracias por unirte a nuestra comunidad.",
+      thanksDiscountText: "Hoy tienes un 10% de descuento para usar en tu tienda favorita.",
+      discountCode: "PRETTYCLUB10",
+      websiteLinkText: "DESCUBRIR LO NUEVO",
     },
     SCALPERS: {
       code: "SCALPERS",
@@ -63,6 +80,14 @@
       bodyClass: "brand-scalpers",
       logo: "./assets/logo-scalpers.svg",
       website: "https://cl.scalperscompany.com",
+      bannerText: "",
+      formTitle: "Suscribete y no te pierdas nuestros beneficios",
+      formSubtitle: "Completa tus datos para sumarte a nuestra lista de novedades, promociones y descuentos.",
+      thanksTitle: "Listo, ya estas suscrito",
+      thanksSubtitle: "Te avisaremos por correo cuando tengamos novedades, promociones y descuentos especiales para ti.",
+      thanksDiscountText: "",
+      discountCode: "",
+      websiteLinkText: "",
     },
     RENATTA: {
       code: "RENATTA",
@@ -71,6 +96,14 @@
       bodyClass: "brand-renatta",
       logo: "./assets/logo-renatta.png",
       website: "https://www.renattandgo.cl",
+      bannerText: "",
+      formTitle: "Suscribete y no te pierdas nuestros beneficios",
+      formSubtitle: "Completa tus datos para sumarte a nuestra lista de novedades, promociones y descuentos.",
+      thanksTitle: "Listo, ya estas suscrito",
+      thanksSubtitle: "Te avisaremos por correo cuando tengamos novedades, promociones y descuentos especiales para ti.",
+      thanksDiscountText: "",
+      discountCode: "",
+      websiteLinkText: "",
     },
   };
 
@@ -211,8 +244,32 @@
     });
     brandWebsiteNodes.forEach((node) => {
       node.href = activeBrand.website;
-      node.textContent = `Ir a ${activeBrand.label}`;
+      node.textContent = activeBrand.websiteLinkText || `Ir a ${activeBrand.label}`;
     });
+
+    if (activeBrand.bannerText) {
+      brandBannerNodes.forEach((node) => node.classList.add("show"));
+      brandBannerTextNodes.forEach((node) => {
+        node.textContent = activeBrand.bannerText;
+      });
+    } else {
+      brandBannerNodes.forEach((node) => node.classList.remove("show"));
+    }
+
+    if (formTitleNode) formTitleNode.textContent = activeBrand.formTitle;
+    if (formSubtitleNode) formSubtitleNode.textContent = activeBrand.formSubtitle;
+    if (thanksTitleNode) thanksTitleNode.textContent = activeBrand.thanksTitle;
+    if (thanksSubtitleNode) thanksSubtitleNode.textContent = activeBrand.thanksSubtitle;
+
+    if (activeBrand.thanksDiscountText && thanksDiscountTextNode) {
+      thanksDiscountTextNode.textContent = activeBrand.thanksDiscountText;
+      thanksDiscountTextNode.hidden = false;
+    }
+
+    if (activeBrand.discountCode && discountCodeBox && discountCodeValue) {
+      discountCodeValue.textContent = activeBrand.discountCode;
+      discountCodeBox.hidden = false;
+    }
   }
 
   function openPolicyModal(event) {
@@ -427,14 +484,8 @@
     setExistingPartnerMode(false);
     policyRead = false;
     acceptPolicy.checked = false;
-    acceptPolicy.disabled = true;
-    acknowledgePolicyButton.disabled = true;
-    acknowledgePolicyButton.textContent = "Lee hasta el final";
     marketingPolicyRead = false;
     acceptMarketingPolicy.checked = false;
-    acceptMarketingPolicy.disabled = true;
-    acknowledgeMarketingPolicyButton.disabled = true;
-    acknowledgeMarketingPolicyButton.textContent = "Lee hasta el final";
   }
 
   function validateRutStep() {
@@ -463,7 +514,9 @@
     else if (!isValidRut(data.rut)) issues.rut = "Ingresa un RUT chileno valido.";
 
     if (!data.name) issues.name = "El nombre es obligatorio.";
-    if (data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+    if (!data.email) {
+      issues.email = "El email es obligatorio.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
       issues.email = "Ingresa un email valido.";
     }
     if (data.birthDate) {
@@ -471,14 +524,10 @@
       const today = new Date();
       if (birth > today) issues.birthDate = "La fecha no puede estar en el futuro.";
     }
-    if (!policyRead) {
-      issues.acceptPolicy = "Debes leer el texto completo antes de aceptar.";
-    } else if (!data.acceptPolicy) {
+    if (!data.acceptPolicy) {
       issues.acceptPolicy = "Debes aceptar la Politica de Privacidad para continuar.";
     }
-    if (!marketingPolicyRead) {
-      issues.acceptMarketingPolicy = "Debes leer el texto completo antes de aceptar.";
-    } else if (!data.acceptMarketingPolicy) {
+    if (!data.acceptMarketingPolicy) {
       issues.acceptMarketingPolicy = "Debes aceptar para recibir promociones y novedades.";
     }
 

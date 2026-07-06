@@ -4,15 +4,21 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Suscribete y recibe beneficios</title>
-    <link rel="stylesheet" href="./styles.css?v=20260702-3">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css?v=20260706-1">
   </head>
   <body>
     <main class="shell">
       <section id="registration-panel" class="form-panel" aria-labelledby="form-title">
-        <div class="heading">
-          <img class="brand-logo" data-brand-logo alt="">
-          <h1 id="form-title">Suscribete y no te pierdas nuestros beneficios</h1>
-          <p>Completa tus datos para sumarte a nuestra lista de novedades, promociones y descuentos.</p>
+        <div class="heading heading--centered">
+          <img class="brand-logo brand-logo--centered" data-brand-logo alt="">
+          <div class="brand-banner" data-brand-banner>
+            <span class="brand-banner__text" data-brand-banner-text></span>
+          </div>
+          <h1 id="form-title" data-form-title>Suscribete y no te pierdas nuestros beneficios</h1>
+          <p data-form-subtitle>Completa tus datos para sumarte a nuestra lista de novedades, promociones y descuentos.</p>
         </div>
 
         <form id="partner-form" novalidate>
@@ -61,8 +67,8 @@
               </label>
 
               <label>
-                <span>Email</span>
-                <input id="email" name="email" type="email" autocomplete="email" placeholder="correo@empresa.cl">
+                <span>Email <strong>*</strong></span>
+                <input id="email" name="email" type="email" autocomplete="email" placeholder="correo@empresa.cl" required>
                 <small class="error" data-error-for="email"></small>
               </label>
 
@@ -81,7 +87,7 @@
 
             <div class="policy-group">
               <label class="policy">
-                <input id="acceptPolicy" name="acceptPolicy" type="checkbox" required disabled>
+                <input id="acceptPolicy" name="acceptPolicy" type="checkbox" required>
                 <span>
                   Acepto la Politica de Privacidad y el uso de mis datos personales.
                   <button id="open-policy" class="link-button" type="button">Leer mas</button>
@@ -92,7 +98,7 @@
 
             <div class="policy-group">
               <label class="policy">
-                <input id="acceptMarketingPolicy" name="acceptMarketingPolicy" type="checkbox" required disabled>
+                <input id="acceptMarketingPolicy" name="acceptMarketingPolicy" type="checkbox" required>
                 <span>
                   Quiero recibir promociones, novedades y descuentos por correo y otros medios.
                   <button id="open-marketing-policy" class="link-button" type="button">Leer mas</button>
@@ -112,10 +118,15 @@
       </section>
 
       <section id="thanks-panel" class="form-panel thanks-panel" aria-labelledby="thanks-title" tabindex="-1" hidden>
-        <div class="heading">
-          <img class="brand-logo" data-brand-logo alt="">
-          <h1 id="thanks-title">Listo, ya estas suscrito</h1>
-          <p>Te avisaremos por correo cuando tengamos novedades, promociones y descuentos especiales para ti.</p>
+        <div class="heading heading--centered">
+          <img class="brand-logo brand-logo--centered" data-brand-logo alt="">
+          <h1 id="thanks-title" data-thanks-title>Listo, ya estas suscrito</h1>
+          <p data-thanks-subtitle>Te avisaremos por correo cuando tengamos novedades, promociones y descuentos especiales para ti.</p>
+          <p class="thanks-discount-text" data-thanks-discount-text hidden></p>
+          <div class="discount-code-box" data-discount-code hidden>
+            <span class="discount-code-label">Tu codigo de descuento:</span>
+            <span class="discount-code-value" data-discount-code-value></span>
+          </div>
         </div>
 
         <div class="actions">
@@ -173,6 +184,6 @@
       </section>
     </div>
 
-    <script src="./app.js?v=20260702-3"></script>
+    <script src="./app.js?v=20260706-1"></script>
   </body>
 </html>
