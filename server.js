@@ -416,7 +416,7 @@ function buildBusinessPartner(data) {
     Phone1: data.phone || undefined,
     EmailAddress: data.email || undefined,
     City: data.city || undefined,
-    Notes: "Registro creado desde formulario web con aceptacion de politicas de datos personales.",
+    Notes: "Registro creado desde formulario web con aceptación de políticas de datos personales.",
     U_GSP_BIRTHDATE: data.birthDate || undefined,
     U_GSP_SENDTPV: "Y",
     U_GSP_SubGroupCode: 2,
@@ -502,7 +502,7 @@ function compactRut(value) {
 
 function businessPartnerEndpoint(cardCode) {
   if (!cardCode || cardCode === "null" || cardCode === "undefined") {
-    throw new Error("SAP encontro un socio existente, pero no devolvio CardCode para actualizarlo.");
+    throw new Error("SAP encontró un socio existente, pero no devolvió CardCode para actualizarlo.");
   }
 
   const escapedCardCode = String(cardCode).replace(/'/g, "''");
@@ -722,7 +722,7 @@ async function findBusinessPartnerByRut(data, cookies, debugLog, options = {}) {
       __sapMatchedSearch: matchedSearch,
       __sapSearchResponse: response.data,
       __sapLookupQuery: {
-        reason: matchedSearch?.reason || "Busqueda por RUT",
+        reason: matchedSearch?.reason || "Búsqueda por RUT",
         filter: matchedSearch?.filter || "",
         endpoint: matchedEndpoint,
       },
@@ -732,7 +732,7 @@ async function findBusinessPartnerByRut(data, cookies, debugLog, options = {}) {
 
   if (!cardCode) {
     const error = new Error(
-      `SAP encontro un socio con RUT ${normalizedRut}, pero la respuesta no incluyo CardCode ni fue posible confirmarlo desde los codigos candidatos. No se actualizo para evitar BusinessPartners('null').`
+      `SAP encontró un socio con RUT ${normalizedRut}, pero la respuesta no incluyo CardCode ni fue posible confirmarlo desde los codigos candidatos. No se actualizó para evitar BusinessPartners('null').`
     );
     error.sapFound = foundPartner;
     error.sapSearchResponse = response.data;
@@ -746,7 +746,7 @@ async function findBusinessPartnerByRut(data, cookies, debugLog, options = {}) {
     __sapMatchedSearch: matchedSearch,
     __sapSearchResponse: response.data,
     __sapLookupQuery: {
-      reason: matchedSearch?.reason || "Busqueda por RUT",
+      reason: matchedSearch?.reason || "Búsqueda por RUT",
       filter: matchedSearch?.filter || "",
       endpoint: matchedEndpoint,
     },
@@ -758,7 +758,7 @@ function validatePartner(data) {
   if (!data || typeof data !== "object") return "No pudimos leer tus datos. Intenta nuevamente.";
   if (!data.rut) return "El RUT es obligatorio.";
   if (!data.name) return "El nombre es obligatorio.";
-  if (!data.acceptPolicy) return "Debes aceptar la Politica de Privacidad para continuar.";
+  if (!data.acceptPolicy) return "Debes aceptar la Política de Privacidad para continuar.";
   return "";
 }
 
@@ -801,7 +801,7 @@ async function handleBusinessPartner(req, res) {
       if (body.debugMode && APP_DEBUG_LOOKUP) {
         debugLog("Modo depuracion activo: se detiene antes del PATCH y se devuelve respuesta SAP.");
         sendJson(res, 200, {
-          message: `Depuracion: SAP encontro el socio ${existingPartner.CardCode}. No se actualizo para mostrar la respuesta encontrada.`,
+          message: `Depuración: SAP encontró el socio ${existingPartner.CardCode}. No se actualizó para mostrar la respuesta encontrada.`,
           cardCode: existingPartner.CardCode,
           exists: true,
           debugMode: true,
@@ -820,7 +820,7 @@ async function handleBusinessPartner(req, res) {
 
       debugLog("PATCH finalizado correctamente.");
       sendJson(res, 200, {
-        message: `El socio de negocios ${existingPartner.CardCode} ya existe. Se actualizaron los campos no obligatorios y el RUT se normalizo sin puntos.`,
+        message: `El socio de negocios ${existingPartner.CardCode} ya existe. Se actualizaron los campos no obligatorios y el RUT se normalizó sin puntos.`,
         cardCode: existingPartner.CardCode,
         exists: true,
         sapFound: sanitizePartnerForClient(existingPartner),
@@ -866,7 +866,7 @@ async function handleBusinessPartnerLookup(req, res) {
     }
 
     if (!/^\d{7,8}[\dK]$/.test(compactRut(normalizedRut))) {
-      sendJson(res, 400, { message: "Ingresa un RUT chileno valido." });
+      sendJson(res, 400, { message: "Ingresa un RUT chileno válido." });
       return;
     }
 
@@ -898,7 +898,7 @@ async function handleBusinessPartnerLookup(req, res) {
         sapSearchResponse: APP_DEBUG_LOOKUP ? existingPartner?.__sapSearchResponse || null : null,
         sapLookupQuery: APP_DEBUG_LOOKUP ? existingPartner?.__sapLookupQuery || null : null,
         sapLookupQueries: APP_DEBUG_LOOKUP ? existingPartner?.__sapLookupQueries || [] : [],
-        message: "No se encontro un socio de negocios con ese RUT.",
+        message: "No se encontró un socio de negocios con ese RUT.",
       });
       return;
     }
@@ -997,7 +997,7 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  sendJson(res, 405, { message: "Metodo no permitido." });
+  sendJson(res, 405, { message: "Método no permitido." });
 });
 
 assertRequiredSapConfig();

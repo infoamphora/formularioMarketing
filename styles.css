@@ -49,9 +49,9 @@ body.brand-amphora {
   --text: #1a1618;
   --muted: #8a7d82;
   --line: #e6dfe2;
-  --accent: #7d4e5a;
-  --accent-dark: #5f3a44;
-  --accent-light: rgba(125, 78, 90, 0.07);
+  --accent: #f08374;
+  --accent-dark: #d9665a;
+  --accent-light: rgba(240, 131, 116, 0.10);
   --button-text: #ffffff;
   --surface-muted: #eee9eb;
   --surface-muted-hover: #e3dce0;
@@ -218,10 +218,10 @@ body {
   align-items: center;
   justify-content: center;
   background:
-    linear-gradient(160deg, rgba(125,78,90,0.94) 0%, rgba(155,100,115,0.88) 40%, rgba(95,58,68,0.96) 100%),
-    radial-gradient(ellipse at 20% 50%, rgba(180,120,140,0.3) 0%, transparent 70%),
-    radial-gradient(ellipse at 80% 20%, rgba(220,170,190,0.18) 0%, transparent 60%);
-  background-color: #7d4e5a;
+    linear-gradient(160deg, rgba(240,131,116,0.96) 0%, rgba(245,154,140,0.92) 40%, rgba(217,102,90,0.96) 100%),
+    radial-gradient(ellipse at 20% 50%, rgba(255,180,165,0.3) 0%, transparent 70%),
+    radial-gradient(ellipse at 80% 20%, rgba(255,215,205,0.2) 0%, transparent 60%);
+  background-color: #f08374;
 }
 
 .brand-banner.show {

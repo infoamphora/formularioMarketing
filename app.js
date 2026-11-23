@@ -64,10 +64,10 @@
       bodyClass: "brand-amphora",
       logo: "./assets/logo-amphora.svg",
       website: "https://amphora.cl/?utm_source=form&utm_medium=form&utm_campaign=loyalty_program",
-      bannerText: "Unete al Club Amphora",
-      formTitle: "Registrate y se parte de nuestra comunidad.",
-      formSubtitle: "Desbloquea beneficios pensados solo para ti: promociones exclusivas, acceso anticipado a nuestras colecciones, invitaciones a eventos y una sorpresa especial en tu mes de cumpleanos.",
-      thanksTitle: "¡Ya eres parte de Club Amphora! ✨",
+      bannerText: "Únete al Club Amphora",
+      formTitle: "Regístrate y sé parte de nuestra comunidad.",
+      formSubtitle: "Desbloquea beneficios pensados solo para ti: promociones exclusivas, acceso anticipado a nuestras colecciones, invitaciones a eventos y una sorpresa especial en tu mes de cumpleaños.",
+      thanksTitle: "¡Ya eres parte del Club Amphora! ✨",
       thanksSubtitle: "Gracias por unirte a nuestra comunidad.",
       thanksDiscountText: "Hoy tienes un 10% de descuento para usar en tu tienda favorita.",
       discountCode: "CLUBAMPHORA10",
@@ -81,9 +81,9 @@
       logo: "./assets/logo-scalpers.svg",
       website: "https://cl.scalperscompany.com",
       bannerText: "",
-      formTitle: "Suscribete y no te pierdas nuestros beneficios",
+      formTitle: "Suscríbete y no te pierdas nuestros beneficios",
       formSubtitle: "Completa tus datos para sumarte a nuestra lista de novedades, promociones y descuentos.",
-      thanksTitle: "Listo, ya estas suscrito",
+      thanksTitle: "Listo, ya estás suscrito",
       thanksSubtitle: "Te avisaremos por correo cuando tengamos novedades, promociones y descuentos especiales para ti.",
       thanksDiscountText: "",
       discountCode: "",
@@ -97,9 +97,9 @@
       logo: "./assets/logo-renatta.png",
       website: "https://www.renattandgo.cl",
       bannerText: "",
-      formTitle: "Suscribete y no te pierdas nuestros beneficios",
+      formTitle: "Suscríbete y no te pierdas nuestros beneficios",
       formSubtitle: "Completa tus datos para sumarte a nuestra lista de novedades, promociones y descuentos.",
-      thanksTitle: "Listo, ya estas suscrito",
+      thanksTitle: "Listo, ya estás suscrito",
       thanksSubtitle: "Te avisaremos por correo cuando tengamos novedades, promociones y descuentos especiales para ti.",
       thanksDiscountText: "",
       discountCode: "",
@@ -232,7 +232,7 @@
   }
 
   function applyBrand() {
-    document.title = `${activeBrand.label} | Suscribete y recibe beneficios`;
+    document.title = `${activeBrand.label} | Suscríbete y recibe beneficios`;
     document.body.classList.remove("brand-amphora", "brand-scalpers", "brand-renatta");
     document.body.classList.add(activeBrand.bodyClass);
     brandLogoNodes.forEach((node) => {
@@ -498,7 +498,7 @@
     }
 
     if (!isValidRut(value)) {
-      setError("rutStep", "Ingresa un RUT chileno valido.");
+      setError("rutStep", "Ingresa un RUT chileno válido.");
       return false;
     }
 
@@ -511,13 +511,13 @@
     const issues = {};
 
     if (!data.rut) issues.rut = "El RUT es obligatorio.";
-    else if (!isValidRut(data.rut)) issues.rut = "Ingresa un RUT chileno valido.";
+    else if (!isValidRut(data.rut)) issues.rut = "Ingresa un RUT chileno válido.";
 
     if (!data.name) issues.name = "El nombre es obligatorio.";
     if (!data.email) {
       issues.email = "El email es obligatorio.";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
-      issues.email = "Ingresa un email valido.";
+      issues.email = "Ingresa un email válido.";
     }
     if (data.birthDate) {
       const birth = new Date(`${data.birthDate}T00:00:00`);
@@ -525,7 +525,7 @@
       if (birth > today) issues.birthDate = "La fecha no puede estar en el futuro.";
     }
     if (!data.acceptPolicy) {
-      issues.acceptPolicy = "Debes aceptar la Politica de Privacidad para continuar.";
+      issues.acceptPolicy = "Debes aceptar la Política de Privacidad para continuar.";
     }
     if (!data.acceptMarketingPolicy) {
       issues.acceptMarketingPolicy = "Debes aceptar para recibir promociones y novedades.";
@@ -597,7 +597,7 @@
         if (result.sapFound) {
           fillDetailsFromPartner(result.sapFound);
           setStatus(
-            "Ya tienes una cuenta con nosotros. Completamos tus datos automaticamente.",
+            "Ya tienes una cuenta con nosotros. Completamos tus datos automáticamente.",
             "success",
             sapDebugData,
             sapDebugQuery
@@ -691,7 +691,7 @@
         const friendlyMessage =
           response.status < 500
             ? result.message || "Revisa los datos ingresados e intenta nuevamente."
-            : "No pudimos completar tu suscripcion en este momento. Intenta nuevamente en unos minutos.";
+            : "No pudimos completar tu suscripción en este momento. Intenta nuevamente en unos minutos.";
         setStatus(friendlyMessage, "fail", result.sapFound || result.sapSearchResponse);
         return;
       }
@@ -702,7 +702,7 @@
       thanksPanel.focus();
     } catch (error) {
       setStatus(
-        "No pudimos completar tu suscripcion. Verifica tu conexion e intenta nuevamente.",
+        "No pudimos completar tu suscripción. Verifica tu conexión e intenta nuevamente.",
         "fail"
       );
     } finally {
