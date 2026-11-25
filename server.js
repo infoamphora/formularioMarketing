@@ -402,6 +402,23 @@ async function loginSapForCompany(companyDb, debugLog) {
   );
 }
 
+// Métodos de pago marcados como "Incluir" en el maestro de socios de SAP.
+const BP_PAYMENT_METHODS = [
+  "CHEQUE",
+  "EFECTIVO",
+  "GETNET",
+  "GETNET MANUAL",
+  "PAGO_CAMBIO_EC",
+  "PAGO_NC",
+  "PAGOMAYORDESC",
+  "REDONDEO",
+  "T_REGALO",
+  "TARJETA",
+  "TARJETAS",
+  "TRANSF",
+  "VALE",
+];
+
 function buildBusinessPartner(data) {
   const cardCode = `C${normalizeRut(data.rut)}`;
   const payload = {
@@ -421,6 +438,7 @@ function buildBusinessPartner(data) {
     U_GSP_SENDTPV: "Y",
     U_GSP_SubGroupCode: 2,
     U_GSP_SubGroupName: "PERSONA NATURAL",
+    BPPaymentMethods: BP_PAYMENT_METHODS.map((code) => ({ PaymentMethodCode: code })),
     ...buildBrandPolicyPayload(data),
   };
 
