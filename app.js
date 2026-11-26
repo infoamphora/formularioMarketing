@@ -66,7 +66,7 @@
       logo: "./assets/logo-amphora.svg",
       website: "https://amphora.cl/?utm_source=form&utm_medium=form&utm_campaign=loyalty_program",
       club: {
-        name: "Amphora Club",
+        name: "Club Amphora",
         tagline: "Tu lugar en Amphora: lo nuevo antes que nadie, nuestros eventos y experiencias pensadas para ti.",
         perks: [
           "Novedades",
