@@ -2,12 +2,20 @@
 <html lang="es">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Suscríbete y recibe beneficios</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./styles.css?v=20260706-1">
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css?v=20261125-1">
+    <script>
+      // Elige el diseño antes de pintar: las marcas sin diseño Club usan el formulario clásico.
+      (function () {
+        var params = new URLSearchParams(window.location.search);
+        var brand = (params.get("brand") || params.get("marca") || "AMPHORA").trim().toUpperCase();
+        if (brand !== "SCALPERS" && brand !== "RENATTA") document.documentElement.classList.add("is-club");
+      })();
+    </script>
   </head>
   <body>
     <main class="shell">
@@ -135,6 +143,128 @@
       </section>
     </main>
 
+    <template id="club-template">
+      <div class="club">
+        <aside class="club-side" data-club-side>
+          <picture>
+            <source media="(min-width: 900px)" data-club-photo-desktop>
+            <img data-club-photo sizes="(max-width: 510px) 510px, 100vw" fetchpriority="high">
+          </picture>
+          <div class="club-side__inner">
+            <img class="club-side__logo" data-club-logo width="1002" height="145">
+            <div>
+              <h1 data-club-name></h1>
+              <p class="club-side__sub" data-club-tagline></p>
+              <ul class="club-perks-d" data-club-perks></ul>
+            </div>
+          </div>
+        </aside>
+
+        <main class="club-main">
+          <div class="club-box">
+            <p class="club-sr" id="club-live" aria-live="polite"></p>
+
+            <section class="club-panel" id="club-p1" aria-labelledby="club-t1">
+              <div class="club-steps"><span>Paso 1 de 2</span><div class="club-bars" aria-hidden="true"><i class="on"></i><i></i></div></div>
+              <h2 id="club-t1" tabindex="-1">Únete al Club</h2>
+              <p class="club-lead">Regístrate en menos de un minuto y llévate <b>10% OFF en tu compra de hoy</b>.</p>
+              <ul class="club-perks-m" aria-label="Beneficios del Club" data-club-chips><li class="hl">10% OFF hoy</li></ul>
+              <form id="club-f1" novalidate>
+                <div class="club-fld">
+                  <label for="club-rut">RUT <i aria-hidden="true">*</i></label>
+                  <div class="club-in"><input id="club-rut" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="12.345.678-5" maxlength="12" required aria-describedby="club-rut-help club-rut-msg"></div>
+                  <p class="club-help" id="club-rut-help">Si ya nos has comprado, completamos tus datos automáticamente.</p>
+                  <p class="club-msg" id="club-rut-msg" hidden></p>
+                </div>
+                <p class="club-alert" id="club-f1-error" hidden></p>
+                <button class="club-btn" type="submit">Continuar</button>
+              </form>
+              <p class="club-fine">Usamos tu RUT para reconocer tus compras en tiendas y online.</p>
+            </section>
+
+            <section class="club-panel" id="club-p2" aria-labelledby="club-t2" hidden>
+              <div class="club-steps"><span>Paso 2 de 2</span><div class="club-bars" aria-hidden="true"><i class="on"></i><i class="on"></i></div></div>
+              <h2 id="club-t2" tabindex="-1">Ya casi terminamos</h2>
+              <div class="club-note">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path id="club-note-icon"/></svg>
+                <p><b id="club-note-title"></b><span id="club-note-text"></span></p>
+              </div>
+              <form id="club-f2" novalidate>
+                <div class="club-grid">
+                  <div class="club-fld">
+                    <label for="club-rut2">RUT</label>
+                    <div class="club-in"><input id="club-rut2" type="text" autocomplete="off" readonly><button class="club-chg" type="button" data-club-go="back">Cambiar</button></div>
+                  </div>
+                  <div class="club-fld">
+                    <label for="club-name">Nombre y apellido <i aria-hidden="true">*</i></label>
+                    <div class="club-in"><input id="club-name" type="text" autocomplete="name" placeholder="Tu nombre" required aria-describedby="club-name-msg"></div>
+                    <p class="club-msg" id="club-name-msg" hidden></p>
+                  </div>
+                  <div class="club-fld">
+                    <label for="club-email">Email <i aria-hidden="true">*</i></label>
+                    <div class="club-in"><input id="club-email" type="email" inputmode="email" autocomplete="email" placeholder="tucorreo@ejemplo.cl" required aria-describedby="club-email-msg"></div>
+                    <p class="club-msg" id="club-email-msg" hidden></p>
+                  </div>
+                  <div class="club-fld">
+                    <label for="club-phone">Teléfono</label>
+                    <div class="club-in"><span class="club-pre" aria-hidden="true">+56</span><input id="club-phone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="9 1234 5678" aria-describedby="club-phone-msg"></div>
+                    <p class="club-msg" id="club-phone-msg" hidden></p>
+                  </div>
+                  <div class="club-fld">
+                    <label for="club-birth">Fecha de nacimiento</label>
+                    <div class="club-in"><input id="club-birth" type="date" autocomplete="bday" aria-describedby="club-birth-msg"></div>
+                    <p class="club-msg" id="club-birth-msg" hidden></p>
+                  </div>
+                  <div class="club-fld">
+                    <label for="club-city">Comuna o ciudad</label>
+                    <div class="club-in"><input id="club-city" type="text" autocomplete="address-level2" placeholder="Ej: Providencia"></div>
+                  </div>
+                </div>
+                <div class="club-chk">
+                  <input type="checkbox" id="club-priv" required aria-describedby="club-priv-msg">
+                  <p><label for="club-priv">Acepto la Política de Privacidad y el uso de mis datos personales. <i aria-hidden="true">*</i></label> <button class="club-more" type="button" id="club-more-priv" aria-label="Leer más sobre la Política de Privacidad">Leer más</button></p>
+                </div>
+                <p class="club-msg" id="club-priv-msg" hidden></p>
+                <div class="club-chk">
+                  <input type="checkbox" id="club-mkt">
+                  <p><label for="club-mkt">Quiero recibir lanzamientos, novedades y beneficios por correo y otros medios.</label> <button class="club-more" type="button" id="club-more-mkt" aria-label="Leer más sobre las comunicaciones">Leer más</button></p>
+                </div>
+                <p class="club-alert" id="club-f2-error" hidden></p>
+                <button class="club-btn" type="submit">Unirme al Club</button>
+                <div class="club-links"><button class="club-lk" type="button" data-club-go="back">← Volver</button><button class="club-lk" type="button" id="club-clear">Limpiar</button></div>
+              </form>
+            </section>
+
+            <section class="club-panel" id="club-p3" aria-labelledby="club-t3" hidden>
+              <div class="club-card">
+                <p class="club-eb">Bienvenida a <span data-club-name></span></p>
+                <p class="club-big">10% OFF</p>
+                <p>en tu compra de hoy</p>
+                <div class="club-live"><span class="club-dot" aria-hidden="true"></span><span>Muestra esta pantalla en caja<br><time data-club-clock></time></span></div>
+              </div>
+              <h2 id="club-t3" class="club-t-ok" tabindex="-1">¡Listo, <span id="club-first"></span>!</h2>
+              <p class="club-lead" id="club-ok-text"></p>
+              <dl class="club-who"><dt>Nombre</dt><dd id="club-w-name"></dd><dt>RUT</dt><dd id="club-w-rut"></dd><dt>Fecha</dt><dd data-club-date></dd></dl>
+              <a class="club-btn club-btn--ghost" target="_blank" rel="noopener" data-club-site></a>
+              <div class="club-links"><button class="club-lk" type="button" data-club-go="restart">Registrar a otra persona</button></div>
+            </section>
+
+            <section class="club-panel" id="club-p4" aria-labelledby="club-t4" hidden>
+              <div class="club-card">
+                <p class="club-eb" data-club-name></p>
+                <h2 id="club-t4" class="club-big2" tabindex="-1">Ya eres parte del Club</h2>
+                <div class="club-live"><span class="club-dot" aria-hidden="true"></span><span>Registrada desde antes<br><time data-club-clock></time></span></div>
+              </div>
+              <p class="club-lead club-lead--member">¡Qué bueno verte de nuevo! El 10% de bienvenida es para la primera inscripción, así que no aplica en esta compra. Te seguimos contando todo lo nuevo.</p>
+              <button class="club-btn club-btn--ghost" type="button" data-club-go="restart">Volver al inicio</button>
+            </section>
+
+            <footer class="club-foot"><img data-club-logo width="1002" height="145"></footer>
+          </div>
+        </main>
+      </div>
+    </template>
+
     <div id="policy-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="policy-title" hidden>
       <div class="modal-backdrop" data-close-policy></div>
       <section class="modal-panel">
@@ -184,6 +314,6 @@
       </section>
     </div>
 
-    <script src="./app.js?v=20260706-1"></script>
+    <script src="./app.js?v=20261125-1"></script>
   </body>
 </html>

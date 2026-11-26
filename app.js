@@ -51,6 +51,7 @@
     ])
   );
 
+  let policyOpener = null;
   let policyRead = false;
   let marketingPolicyRead = false;
   let currentStep = "rut-step";
@@ -64,14 +65,23 @@
       bodyClass: "brand-amphora",
       logo: "./assets/logo-amphora.svg",
       website: "https://amphora.cl/?utm_source=form&utm_medium=form&utm_campaign=loyalty_program",
-      bannerText: "Únete al Club Amphora",
-      formTitle: "Regístrate y sé parte de nuestra comunidad.",
-      formSubtitle: "Desbloquea beneficios pensados solo para ti: promociones exclusivas, acceso anticipado a nuestras colecciones, invitaciones a eventos y una sorpresa especial en tu mes de cumpleaños.",
-      thanksTitle: "¡Ya eres parte del Club Amphora! ✨",
-      thanksSubtitle: "Gracias por unirte a nuestra comunidad.",
-      thanksDiscountText: "Hoy tienes un 10% de descuento para usar en tu tienda favorita.",
-      discountCode: "CLUBAMPHORA10",
-      websiteLinkText: "DESCUBRIR LO NUEVO",
+      club: {
+        name: "Amphora Club",
+        tagline: "Tu lugar en Amphora: lo nuevo antes que nadie, nuestros eventos y experiencias pensadas para ti.",
+        perks: [
+          "Novedades",
+          "Invitaciones a activaciones",
+          "Eventos de marca",
+          "Experiencias especiales",
+          "Acceso anticipado",
+        ],
+        logo: "./assets/club-logo-amphora.svg",
+        photoMobile: "./assets/club-walk-800.webp 800w, ./assets/club-walk-1200.webp 1200w",
+        photoDesktop: "./assets/club-seat-894.webp",
+        photoFallback: "./assets/club-walk-800.webp",
+        photoAlt: "Modelo frente al mar con una cartera de la colección Under the sun",
+        siteLabel: "Ver lo nuevo en amphora.cl",
+      },
     },
     SCALPERS: {
       code: "SCALPERS",
@@ -276,6 +286,7 @@
     if (event) {
       event.preventDefault();
       event.stopPropagation();
+      policyOpener = event.currentTarget;
     }
 
     policyModal.hidden = false;
@@ -290,13 +301,14 @@
 
   function closePolicyModal() {
     policyModal.hidden = true;
-    openPolicyButton.focus();
+    (policyOpener || openPolicyButton).focus();
   }
 
   function openMarketingPolicyModal(event) {
     if (event) {
       event.preventDefault();
       event.stopPropagation();
+      policyOpener = event.currentTarget;
     }
 
     marketingPolicyModal.hidden = false;
@@ -311,7 +323,7 @@
 
   function closeMarketingPolicyModal() {
     marketingPolicyModal.hidden = true;
-    openMarketingPolicyButton.focus();
+    (policyOpener || openMarketingPolicyButton).focus();
   }
 
   function updatePolicyReadState() {
@@ -711,8 +723,362 @@
     }
   });
 
-  loadRuntimeConfig().finally(() => {
-    showRutStep();
+  function startClub(config) {
+    const root = document
+      .querySelector("#club-template")
+      .content.firstElementChild.cloneNode(true);
+    const $ = (selector) => root.querySelector(selector);
+    const $$ = (selector) => Array.from(root.querySelectorAll(selector));
+
+    // Datos de marca: se asignan antes de insertar para no pedir fotos que no se usan.
+    $("[data-club-side]").setAttribute("aria-label", config.name);
+    $("[data-club-photo-desktop]").srcset = config.photoDesktop;
+    const photo = $("[data-club-photo]");
+    photo.alt = config.photoAlt;
+    photo.srcset = config.photoMobile;
+    photo.src = config.photoFallback;
+    $$("[data-club-logo]").forEach((node) => {
+      node.src = config.logo;
+      node.alt = activeBrand.label;
+    });
+    $$("[data-club-name]").forEach((node) => {
+      node.textContent = config.name;
+    });
+    $("[data-club-tagline]").textContent = config.tagline;
+    config.perks.forEach((perk) => {
+      [$("[data-club-perks]"), $("[data-club-chips]")].forEach((list) => {
+        const item = document.createElement("li");
+        item.textContent = perk;
+        list.appendChild(item);
+      });
+    });
+    $("[data-club-site]").href = activeBrand.website;
+    $("[data-club-site]").textContent = config.siteLabel;
+
+    const live = $("#club-live");
+    const rut = $("#club-rut");
+    const rut2 = $("#club-rut2");
+    const name = $("#club-name");
+    const email = $("#club-email");
+    const phone = $("#club-phone");
+    const birth = $("#club-birth");
+    const city = $("#club-city");
+    const priv = $("#club-priv");
+    const mkt = $("#club-mkt");
+    const continueBtn = $("#club-f1 .club-btn");
+    const joinBtn = $("#club-f2 .club-btn");
+    const step1Error = $("#club-f1-error");
+    const step2Error = $("#club-f2-error");
+    const fields = [name, email, phone, birth, city];
+    const SEND_ERROR =
+      "No pudimos completar tu registro. Revisa tu conexión e intenta de nuevo. Si sigue fallando, avísale a quien te atiende en caja.";
+    const LOOKUP_ERROR =
+      "No pudimos verificar tus datos en este momento. Intenta nuevamente en unos segundos.";
+    // RUT cuyos datos ya están en el paso 2: volver y continuar no borra lo escrito.
+    let loadedRut = "";
+    let busy = false;
+
+    function showError(node, message) {
+      node.textContent = message;
+      node.hidden = !message;
+    }
+
+    function setFieldError(input, message) {
+      const node = $(`#${input.id}-msg`);
+      if (!node) return;
+      showError(node, message);
+      const box = input.closest(".club-fld, .club-chk");
+      box.classList.toggle("bad", Boolean(message));
+      input.setAttribute("aria-invalid", message ? "true" : "false");
+    }
+
+    function announce(message) {
+      live.textContent = message;
+    }
+
+    function showPanel(number) {
+      [1, 2, 3, 4].forEach((n) => {
+        $(`#club-p${n}`).hidden = n !== number;
+      });
+      window.scrollTo(0, 0);
+      $(`#club-t${number}`).focus({ preventScroll: true });
+      const step = $(`#club-p${number} .club-steps span`);
+      announce(step ? step.textContent : "");
+    }
+
+    function clearDetails() {
+      fields.forEach((input) => {
+        if (!input.readOnly) input.value = "";
+      });
+      priv.checked = false;
+      mkt.checked = false;
+      [...fields, priv].forEach((input) => setFieldError(input, ""));
+      showError(step2Error, "");
+    }
+
+    function resetDetails() {
+      name.readOnly = false;
+      clearDetails();
+      loadedRut = "";
+    }
+
+    function formatRutLive(value) {
+      const clean = value.replace(/[^0-9kK]/g, "").toUpperCase().slice(0, 9);
+      if (clean.length < 2) return clean;
+      return `${clean.slice(0, -1).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}-${clean.slice(-1)}`;
+    }
+
+    function mobileDigits(value) {
+      const digits = String(value).replace(/\D/g, "");
+      return /^569\d{8}$/.test(digits) ? digits.slice(2) : digits;
+    }
+
+    function formatMobile(digits) {
+      return `${digits[0]} ${digits.slice(1, 5)} ${digits.slice(5)}`;
+    }
+
+    function localToday() {
+      const now = new Date();
+      const pad = (n) => String(n).padStart(2, "0");
+      return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+    }
+
+    function fillDetails(partner, rutText) {
+      resetDetails();
+      rut2.value = rutText;
+      birth.max = localToday();
+
+      if (partner) {
+        const policyKeys = getBrandPolicyKeys();
+        name.value = valueFromPartner(partner, ["CardName", "CardForeignName"]).trim();
+        // El backend no actualiza el nombre de un cliente existente.
+        name.readOnly = name.value.length >= 3;
+        email.value = valueFromPartner(partner, ["EmailAddress", "E_Mail", "MailAddress"]);
+        const digits = ["Phone1", "Cellular", "Phone2"]
+          .map((key) => mobileDigits(partner[key] || ""))
+          .find((value) => /^9\d{8}$/.test(value));
+        phone.value = digits ? formatMobile(digits) : "";
+        birth.value = formatBirthDate(
+          valueFromPartner(partner, ["U_GSP_BIRTHDATE", "BirthDate"])
+        );
+        city.value = valueFromPartner(partner, ["City", "CityName"]);
+        // Conserva un permiso ya otorgado; si no, va desmarcado.
+        mkt.checked = String(partner[policyKeys.marketing] || "").toUpperCase() === "Y";
+      }
+
+      $("#club-note-icon").setAttribute(
+        "d",
+        partner ? "M8 12.5l2.6 2.5L16 9.5" : "M12 8v5M12 16h.01"
+      );
+      $("#club-note-title").textContent = partner
+        ? "Qué bueno verte de nuevo."
+        : `Bienvenida a ${activeBrand.label}.`;
+      $("#club-note-text").textContent = partner
+        ? "Completamos tus datos con tus compras anteriores. Revísalos y listo."
+        : "Completa tus datos para unirte al Club.";
+      loadedRut = rutText;
+    }
+
+    // Es socia quien ya aceptó la política de datos de esta marca en SAP.
+    function isMember(partner) {
+      const flag = partner?.[getBrandPolicyKeys().dataPolicy];
+      return String(flag || "").toUpperCase() === "Y";
+    }
+
+    rut.addEventListener("input", () => {
+      const atEnd = rut.selectionStart === rut.value.length;
+      const caret = rut.selectionStart;
+      rut.value = formatRutLive(rut.value);
+      const position = atEnd ? rut.value.length : caret;
+      rut.setSelectionRange(position, position);
+      setFieldError(rut, "");
+      showError(step1Error, "");
+    });
+
+    $("#club-f1").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (busy) return;
+      showError(step1Error, "");
+
+      const message = !rut.value.trim()
+        ? "Ingresa tu RUT para continuar."
+        : !isValidRut(rut.value)
+          ? "Revisa tu RUT: el dígito verificador no coincide."
+          : "";
+      setFieldError(rut, message);
+      if (message) {
+        announce(message);
+        rut.focus();
+        return;
+      }
+
+      const rutText = formatRutLive(rut.value);
+      if (rutText === loadedRut) {
+        showPanel(2);
+        return;
+      }
+
+      busy = true;
+      rut.readOnly = true;
+      continueBtn.disabled = true;
+      continueBtn.textContent = "Un momento…";
+      try {
+        const response = await fetch(
+          `${lookupApiUrl}?rut=${encodeURIComponent(rutText)}&brand=${encodeURIComponent(activeBrand.code)}&debugMode=false`
+        );
+        if (!response.ok) throw new Error("lookup");
+        const result = await response.json();
+
+        if (isMember(result.sapFound)) {
+          resetDetails();
+          showPanel(4);
+        } else {
+          fillDetails(result.sapFound, rutText);
+          showPanel(2);
+        }
+      } catch {
+        showError(step1Error, LOOKUP_ERROR);
+        announce(LOOKUP_ERROR);
+      } finally {
+        busy = false;
+        rut.readOnly = false;
+        continueBtn.disabled = false;
+        continueBtn.textContent = "Continuar";
+      }
+    });
+
+    function validateDetails() {
+      const digits = mobileDigits(phone.value);
+      const issues = [
+        [name, name.value.trim().length < 3 && "Escribe tu nombre y apellido."],
+        [
+          email,
+          !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.value.trim()) &&
+            "Revisa tu email, parece que falta algo.",
+        ],
+        [
+          phone,
+          phone.value.trim() &&
+            !/^9\d{8}$/.test(digits) &&
+            "El celular tiene 9 dígitos y empieza con 9.",
+        ],
+        [
+          birth,
+          birth.validity.badInput
+            ? "Revisa la fecha de nacimiento."
+            : birth.value > localToday() && "La fecha no puede estar en el futuro.",
+        ],
+        [
+          priv,
+          !priv.checked &&
+            "Para unirte al Club necesitamos que aceptes la Política de Privacidad.",
+        ],
+      ];
+      issues.forEach(([input, message]) => setFieldError(input, message || ""));
+      const failed = issues.filter(([, message]) => message);
+      if (failed.length) {
+        announce(failed.map(([, message]) => message).join(" "));
+        failed[0][0].focus();
+      }
+      return failed.length === 0;
+    }
+
+    fields.forEach((input) => input.addEventListener("input", () => setFieldError(input, "")));
+    priv.addEventListener("change", () => setFieldError(priv, ""));
+
+    $("#club-f2").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (busy) return;
+      showError(step2Error, "");
+      if (!validateDetails()) return;
+
+      const digits = mobileDigits(phone.value);
+      const payload = {
+        brand: activeBrand.code,
+        rut: rut2.value,
+        name: name.value.trim(),
+        email: email.value.trim(),
+        phone: digits ? `+56 ${formatMobile(digits)}` : "",
+        birthDate: birth.value,
+        city: city.value.trim(),
+        acceptPolicy: priv.checked,
+        acceptMarketingPolicy: mkt.checked,
+      };
+
+      busy = true;
+      joinBtn.disabled = true;
+      joinBtn.textContent = "Enviando…";
+      try {
+        const response = await fetch(apiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!response.ok) throw new Error("submit");
+
+        $("#club-first").textContent = payload.name.split(/\s+/)[0];
+        $("#club-w-name").textContent = payload.name;
+        $("#club-w-rut").textContent = payload.rut;
+        $("#club-ok-text").textContent = payload.acceptMarketingPolicy
+          ? "Desde ahora te llegan las novedades del Club, invitaciones a activaciones y eventos de marca, experiencias especiales y acceso anticipado."
+          : "Ya eres parte del Club. Si quieres recibir novedades, invitaciones y accesos anticipados, puedes activarlos cuando quieras.";
+        resetDetails();
+        rut.value = "";
+        tick();
+        showPanel(3);
+      } catch {
+        showError(step2Error, SEND_ERROR);
+        announce(SEND_ERROR);
+      } finally {
+        busy = false;
+        joinBtn.disabled = false;
+        joinBtn.textContent = "Unirme al Club";
+      }
+    });
+
+    $("#club-clear").addEventListener("click", () => {
+      if (!busy) clearDetails();
+    });
+    $$("[data-club-go]").forEach((button) =>
+      button.addEventListener("click", () => {
+        if (busy) return;
+        if (button.dataset.clubGo === "restart") {
+          resetDetails();
+          rut.value = "";
+        }
+        showPanel(1);
+      })
+    );
+    $("#club-more-priv").addEventListener("click", openPolicyModal);
+    $("#club-more-mkt").addEventListener("click", openMarketingPolicyModal);
+
+    const months = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+    function tick() {
+      const now = new Date();
+      const pad = (n) => String(n).padStart(2, "0");
+      const date = `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+      const time = [now.getHours(), now.getMinutes(), now.getSeconds()].map(pad).join(":");
+      $$("[data-club-clock]").forEach((node) => {
+        node.textContent = `${date} · ${time}`;
+      });
+      $("[data-club-date]").textContent = date;
+    }
+
+    document.title = `Registro ${config.name}`;
+    document.body.prepend(root);
+    tick();
+    window.setInterval(tick, 1000);
+  }
+
+  if (activeBrand.club) {
     applyBrand();
-  });
+    // El formulario clásico no se usa en esta marca.
+    document.querySelector(".shell").remove();
+    startClub(activeBrand.club);
+  } else {
+    loadRuntimeConfig().finally(() => {
+      showRutStep();
+      applyBrand();
+    });
+  }
 })();
