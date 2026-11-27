@@ -953,15 +953,25 @@ function handleRuntimeConfig(_req, res) {
   });
 }
 
+const PUBLIC_FILES = new Set(["index.html", "app.js", "styles.css"]);
+
+function isPublicFile(relativePath) {
+  if (PUBLIC_FILES.has(relativePath)) return true;
+  const parts = relativePath.split("/");
+  return parts[0] === "assets" && parts.length > 1 && parts.every((part) => part && !part.startsWith("."));
+}
+
 function serveStatic(req, res) {
   const pathname = decodeURIComponent((req.url || "/").split("?")[0]);
   const appPathname = stripBasePath(pathname);
   const requested = appPathname === "/" ? "/index.html" : appPathname;
   const filePath = path.join(__dirname, requested);
+  const relativePath = path.relative(__dirname, filePath).split(path.sep).join("/");
 
-  if (!filePath.startsWith(__dirname)) {
-    res.writeHead(403);
-    res.end("Forbidden");
+  // Solo se sirven los archivos públicos; nunca .env, server.js, .git, etc.
+  if (!isPublicFile(relativePath)) {
+    res.writeHead(404);
+    res.end("Not found");
     return;
   }
 
